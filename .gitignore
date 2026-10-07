@@ -1,0 +1,9 @@
+# object files
+*.o
+# old version and demo material
+backup_v1/
+demo/
+# large intermediate video captures
+build/video/
+.DS_Store
+__pycache__/
