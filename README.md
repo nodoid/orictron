@@ -166,3 +166,10 @@ python3 tools/mkdemovideo.py spectrum_demo.mp4 oric_demo.mp4 out.mp4
 The first version of this port was a flip-screen, room-based remake with its
 own colour scheme. Its source is kept in `backup_v1/`. The videos in `movie/`
 were recorded from that version and don't show the current game.
+
+## Licence
+
+The code and tools in this repository are released under the GNU General
+Public License, version 2 - see `LICENSE`.  Quazatron itself is (c) 1986
+Graftgold / Hewson Consultants; this port contains none of its code or
+graphics.
