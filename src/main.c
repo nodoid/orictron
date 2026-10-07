@@ -35,8 +35,7 @@ static const unsigned char walkable[8] = { 0, 1, 0, 1, 1, 1, 0, 0 };
 #define FIELD_Y  (PANEL_Y + 16)     /* text row inside the panel fields */
 #define BAR_Y    (PANEL_Y + 29)
 #define C_STAT   4                  /* status text: 8 chars */
-#define C_DECK   19
-#define C_LEFT   21
+#define C_GBOX   18                 /* attribute of the left symbol box */
 #define C_UNIT   28
 #define C_SCORE  32
 #define C_BAR    3                  /* energy bar: attribute + 9 columns */
@@ -217,6 +216,12 @@ static void draw_panel(void)
     unpack();
 }
 
+/* the left symbol box: white while grappling, as on the Spectrum */
+static void gbox(unsigned char c)
+{
+    rect(C_GBOX, PANEL_Y + 15, 1, 10, c);
+}
+
 static void stat(const char *s, unsigned char t)
 {
     field(C_STAT, 8, s);
@@ -225,10 +230,7 @@ static void stat(const char *s, unsigned char t)
 
 static void panel_update(void)
 {
-    unsigned char n, k, left;
-    left = deck_alive[deck];
-    field(C_DECK, 1, num(deck + 1, 1));
-    field(C_LEFT, 1, left > 9 ? "+" : num(left, 1));
+    unsigned char n;
     field(C_UNIT, 2, type_code[p_type]);
     field(C_SCORE, 5, num(score, 5));
     field(C_SCORE + 5, 1, "0");
@@ -648,7 +650,7 @@ static void t_result_fx(unsigned char win)
 /* returns 1 if player wins */
 static unsigned char transfer(unsigned char et)
 {
-    unsigned char w, cur, lp, rp, time, rep, ecool, fired, i, mine, theirs, prog, end;
+    unsigned char w, cur, lp, rp, time, rep, ecool, fired, i, mine, theirs;
     unsigned char sec;
 
     snd_off();
@@ -1330,9 +1332,9 @@ static void play(void)
         /* hold fire while standing still to grapple, as on the Spectrum;
          * then run into a droid to start the transfer */
         if (in_fire && !in_dx && !in_dy) {
-            if (++p_hold == 12) { p_grab = 150; stat("GRAPPLE", 0); }
+            if (++p_hold == 12) { p_grab = 150; stat("GRAPPLE", 0); gbox(0x17); }
         } else p_hold = 0;
-        if (p_grab && !--p_grab) stat("MOBILE", 0);
+        if (p_grab && !--p_grab) { stat("MOBILE", 0); gbox(0x15); }
         if (p_grab) k |= 1;
 
         /* fire */
@@ -1371,6 +1373,7 @@ static void play(void)
                 unsigned char ty = et[a];
                 p_grab = p_hold = 0;
                 stat("GRAPPLE", 0);
+                gbox(0x17);
                 pause(10);
                 if (transfer(ty)) {
                     p_type = ty;
@@ -1406,6 +1409,7 @@ static void play(void)
                     }
                     stat("FAILED", 50);
                 }
+                gbox(0x15);
                 if (game_over && !p_hp) break;
                 continue;
             }

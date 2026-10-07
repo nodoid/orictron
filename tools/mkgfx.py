@@ -281,6 +281,8 @@ P_TOP, P_BOT = 6, 41          # capsule rows (panel-relative)
 P_FY = 15                     # field rows: 10, text at +1
 P_BARY = 29                   # energy bar rows: 3
 EDGE = 0x4C                   # black, white line, black
+PANEL_G = [".#####", "######", "##...#", "##..##", "######", ".#####", "....##", "....##"]
+PANEL_A = ["..##.#", ".###.#", "##..##", "######", "######", "##..##", "....##", "....##"]
 
 
 def panel_image():
@@ -329,6 +331,11 @@ def panel_image():
                 r[c0 + 1 + k] = 0x40
         r[12] = 0x11
         r[30] = 0x11
+    # the two fixed symbols in the middle capsule, copied from the Spectrum
+    # panel (8 pixels wide there, 6 here): black on magenta and on green
+    for k in range(8):
+        rows[P_FY + 1 + k][19] = 0x40 | int(PANEL_G[k].replace('#', '1').replace('.', '0'), 2)
+        rows[P_FY + 1 + k][21] = 0x40 | int(PANEL_A[k].replace('#', '1').replace('.', '0'), 2)
     for y in range(P_BARY, P_BARY + 3):
         rows[y][3] = 0x13
     return rows
